@@ -42,10 +42,21 @@ export default function RoleManagement() {
   };
 
   const handleCreateRole = async () => {
-    if (!roleName) return showError("Role name required");
+    const normalizedRoleName = roleName.trim().replace(/\s+/g, " ").toUpperCase();
+
+    if (!normalizedRoleName) return showError("Role name required");
+    if (permissions.length === 0) return showError("Select at least one permission");
+
+    const duplicate = roles.some(
+      (role) => role.name?.trim().toUpperCase() === normalizedRoleName
+    );
+
+    if (duplicate) {
+      return showError(`Role ${normalizedRoleName} already exists`);
+    }
 
     try {
-      await createRole({ name: roleName, permissions });
+      await createRole({ name: normalizedRoleName, permissions });
       setRoleName("");
       setPermissions([]);
       setRoles(await getRoles());
@@ -106,7 +117,7 @@ export default function RoleManagement() {
           className="border p-2 rounded w-full mb-4"
           placeholder="User"
           value={roleName}
-          onChange={(e) => setRoleName(e.target.value.toUpperCase())}
+          onChange={(e) => setRoleName(e.target.value)}
         />
 
         <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
