@@ -2,9 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 export default function RequireAuth({ allowedRoles }) {
-  const { isAuthenticated, role, loading } = useAuth();
-
-  if (loading) return <div>Checking auth...</div>;
+  const { isAuthenticated, role } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

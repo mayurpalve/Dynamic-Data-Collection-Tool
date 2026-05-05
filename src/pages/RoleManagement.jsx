@@ -19,6 +19,7 @@ export default function RoleManagement() {
   const [roleName, setRoleName] = useState("");
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [creatingRole, setCreatingRole] = useState(false);
   const [editingRoleId, setEditingRoleId] = useState(null);
   const [editPermissions, setEditPermissions] = useState([]);
 
@@ -42,6 +43,8 @@ export default function RoleManagement() {
   };
 
   const handleCreateRole = async () => {
+    if (creatingRole) return;
+
     const normalizedRoleName = roleName.trim().replace(/\s+/g, " ").toUpperCase();
 
     if (!normalizedRoleName) return showError("Role name required");
@@ -56,6 +59,7 @@ export default function RoleManagement() {
     }
 
     try {
+      setCreatingRole(true);
       await createRole({ name: normalizedRoleName, permissions });
       setRoleName("");
       setPermissions([]);
@@ -63,6 +67,8 @@ export default function RoleManagement() {
       showSuccess("Role created successfully");
     } catch (err) {
       showError(getErrorMessage(err, "Failed to create role"));
+    } finally {
+      setCreatingRole(false);
     }
   };
 
@@ -135,9 +141,10 @@ export default function RoleManagement() {
 
         <button
           onClick={handleCreateRole}
-          className="bg-blue-600 text-white px-6 py-2 rounded"
+          disabled={creatingRole}
+          className="bg-blue-600 text-white px-6 py-2 rounded disabled:opacity-60"
         >
-          Create Role
+          {creatingRole ? "Creating..." : "Create Role"}
         </button>
       </div>
 

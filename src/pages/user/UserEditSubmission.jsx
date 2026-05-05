@@ -8,33 +8,32 @@ import { getErrorMessage, showError, showSuccess } from "../../utils/toast";
 export default function UserEditSubmission() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [submission, setSubmission] = useState(null);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadSubmission();
-  }, []);
+    const loadSubmission = async () => {
+      try {
+        const res = await getSchemeAnswers();
+        const found = res.items.find((answer) => answer._id === id);
 
-  const loadSubmission = async () => {
-    try {
-      const res = await getSchemeAnswers();
-      const found = res.items.find((answer) => answer._id === id);
+        if (!found) {
+          showError("Submission not found");
+          navigate("/user/submissions");
+          return;
+        }
 
-      if (!found) {
-        showError("Submission not found");
-        return navigate("/user/submissions");
+        setFormData(found.data || {});
+      } catch (err) {
+        console.error(err);
+        showError(getErrorMessage(err, "Failed to load submission"));
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setSubmission(found);
-      setFormData(found.data || {});
-    } catch (err) {
-      console.error(err);
-      showError(getErrorMessage(err, "Failed to load submission"));
-    } finally {
-      setLoading(false);
-    }
-  };
+    void loadSubmission();
+  }, [id, navigate]);
 
   const handleChange = (key, value) => {
     setFormData((prev) => ({ ...prev, [key]: value }));

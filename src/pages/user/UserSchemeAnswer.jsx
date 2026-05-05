@@ -39,7 +39,7 @@ export default function UserSchemeAnswer() {
       return;
     }
 
-    loadPage();
+    void loadPage();
   }, [schemeId, navigate]);
 
   const editableFields = useMemo(

@@ -25,7 +25,12 @@ export default function Divisions() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    loadDivisions();
+
+    const run = async () => {
+      await loadDivisions();
+    };
+
+    void run();
   }, [isAuthenticated]);
 
   const addDivision = async () => {
