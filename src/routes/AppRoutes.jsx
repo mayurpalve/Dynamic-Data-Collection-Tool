@@ -9,6 +9,7 @@ import Schemes from "../pages/Schemes";
 import Divisions from "../pages/Divisions";
 import SchemeDefinition from "../pages/SchemeDefinition";
 import SchemeAnswer from "../pages/SchemeAnswer";
+import RoleManagement from "../pages/RoleManagement";
 import UserManagement from "../pages/UserManagement";
 import SchemeAnswerAdmin from "../pages/SchemeAnswerAdmin";
 import ForgotPassword from "../pages/ForgotPassword";
@@ -43,6 +44,10 @@ export default function AppRoutes() {
           <Route path="/scheme-answer" element={<SchemeAnswer />} />
           <Route path="/user-management" element={<UserManagement />} />
           <Route path="/scheme-answers-admin" element={<SchemeAnswerAdmin />} />
+
+          <Route element={<RequireAuth allowedRoles={["SUPER_ADMIN"]} />}>
+            <Route path="/role-management" element={<RoleManagement />} />
+          </Route>
         </Route>
       </Route>
 

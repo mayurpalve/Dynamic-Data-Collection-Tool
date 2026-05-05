@@ -71,6 +71,10 @@ export default function Sidebar({ isOpen = false, onClose }) {
                 Super Admin
               </p>
 
+              <NavLink to="/role-management" className={navClass} onClick={handleNavigate}>
+                Role Management
+              </NavLink>
+
               <NavLink to="/user-management" className={navClass} onClick={handleNavigate}>
                 User Management
               </NavLink>

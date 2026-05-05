@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { createUser, getUsers } from "../api/user.api";
+import { getRoles } from "../api/role.api";
 import { getSchemes } from "../api/scheme.api";
 import {
   assignScheme,
@@ -17,6 +18,7 @@ import { getErrorMessage, showError, showSuccess } from "../utils/toast";
 export default function UserManagement() {
   const { role: currentRole } = useAuth();
   const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [schemes, setSchemes] = useState([]);
   const [schemeDefs, setSchemeDefs] = useState([]);
   const [selectedUserIds, setSelectedUserIds] = useState([]);
@@ -33,22 +35,32 @@ export default function UserManagement() {
     role: "",
   });
 
-  const availableRoles =
+  const allowedRoleNames =
     currentRole === "SUPER_ADMIN"
       ? ["ADMIN"]
       : currentRole === "ADMIN"
         ? ["USER"]
         : [];
 
+  const availableRoles = roles.filter((role) =>
+    allowedRoleNames.includes(role.name)
+  );
+
+  const roleOptions = availableRoles.length
+    ? availableRoles.map((role) => role.name)
+    : allowedRoleNames;
+
   const loadData = async () => {
     try {
-      const [u, s, d] = await Promise.all([
+      const [u, r, s, d] = await Promise.all([
         getUsers(),
+        getRoles(),
         getSchemes(),
         getAllSchemeDefinitions(),
       ]);
 
       setUsers(u || []);
+      setRoles(r || []);
       setSchemes(s || []);
       setSchemeDefs(d || []);
     } catch (err) {
@@ -224,7 +236,7 @@ export default function UserManagement() {
             onChange={(e) => setForm({ ...form, role: e.target.value })}
           >
             <option value="">Select Role</option>
-            {availableRoles.map((roleName) => (
+            {roleOptions.map((roleName) => (
               <option key={roleName} value={roleName}>
                 {roleName}
               </option>
