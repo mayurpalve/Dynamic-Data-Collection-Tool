@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+@layer base {
+  input,
+  select,
+  textarea {
+    color: #0f172a;
+  }
+}
