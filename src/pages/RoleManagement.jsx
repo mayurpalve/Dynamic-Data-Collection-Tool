@@ -19,7 +19,6 @@ export default function RoleManagement() {
   const [roleName, setRoleName] = useState("");
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [creatingRole, setCreatingRole] = useState(false);
   const [editingRoleId, setEditingRoleId] = useState(null);
   const [editPermissions, setEditPermissions] = useState([]);
 
@@ -43,32 +42,16 @@ export default function RoleManagement() {
   };
 
   const handleCreateRole = async () => {
-    if (creatingRole) return;
-
-    const normalizedRoleName = roleName.trim().replace(/\s+/g, " ").toUpperCase();
-
-    if (!normalizedRoleName) return showError("Role name required");
-    if (permissions.length === 0) return showError("Select at least one permission");
-
-    const duplicate = roles.some(
-      (role) => role.name?.trim().toUpperCase() === normalizedRoleName
-    );
-
-    if (duplicate) {
-      return showError(`Role ${normalizedRoleName} already exists`);
-    }
+    if (!roleName) return showError("Role name required");
 
     try {
-      setCreatingRole(true);
-      await createRole({ name: normalizedRoleName, permissions });
+      await createRole({ name: roleName, permissions });
       setRoleName("");
       setPermissions([]);
       setRoles(await getRoles());
       showSuccess("Role created successfully");
     } catch (err) {
       showError(getErrorMessage(err, "Failed to create role"));
-    } finally {
-      setCreatingRole(false);
     }
   };
 
@@ -123,7 +106,7 @@ export default function RoleManagement() {
           className="border p-2 rounded w-full mb-4"
           placeholder="User"
           value={roleName}
-          onChange={(e) => setRoleName(e.target.value)}
+          onChange={(e) => setRoleName(e.target.value.toUpperCase())}
         />
 
         <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -141,10 +124,9 @@ export default function RoleManagement() {
 
         <button
           onClick={handleCreateRole}
-          disabled={creatingRole}
-          className="bg-blue-600 text-white px-6 py-2 rounded disabled:opacity-60"
+          className="bg-blue-600 text-white px-6 py-2 rounded"
         >
-          {creatingRole ? "Creating..." : "Create Role"}
+          Create Role
         </button>
       </div>
 

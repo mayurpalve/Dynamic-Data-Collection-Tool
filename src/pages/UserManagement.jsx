@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../auth/AuthContext";
 import { createUser, getUsers } from "../api/user.api";
 import { getRoles } from "../api/role.api";
 import { getSchemes } from "../api/scheme.api";
@@ -16,7 +15,6 @@ import {
 import { getErrorMessage, showError, showSuccess } from "../utils/toast";
 
 export default function UserManagement() {
-  const { role: currentRole } = useAuth();
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [schemes, setSchemes] = useState([]);
@@ -34,21 +32,6 @@ export default function UserManagement() {
     password: "",
     role: "",
   });
-
-  const allowedRoleNames =
-    currentRole === "SUPER_ADMIN"
-      ? ["ADMIN"]
-      : currentRole === "ADMIN"
-        ? ["USER"]
-        : [];
-
-  const availableRoles = roles.filter((role) =>
-    allowedRoleNames.includes(role.name)
-  );
-
-  const roleOptions = availableRoles.length
-    ? availableRoles.map((role) => role.name)
-    : allowedRoleNames;
 
   const loadData = async () => {
     try {
@@ -236,9 +219,9 @@ export default function UserManagement() {
             onChange={(e) => setForm({ ...form, role: e.target.value })}
           >
             <option value="">Select Role</option>
-            {roleOptions.map((roleName) => (
-              <option key={roleName} value={roleName}>
-                {roleName}
+            {roles.map((role) => (
+              <option key={role._id} value={role.name}>
+                {role.name}
               </option>
             ))}
           </select>
